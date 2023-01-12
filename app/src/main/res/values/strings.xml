@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">WorkManagerSample</string>
+    <string name="work_title">Select Work Type</string>
+    <string name="periodic_work">Periodic Work</string>
+    <string name="one_time_work">One Time Work</string>
+    <string name="immediate_work">Immediate Work</string>
+    <string name="go">Go</string>
+    <string name="cancel_work">Cancel</string>
 </resources>

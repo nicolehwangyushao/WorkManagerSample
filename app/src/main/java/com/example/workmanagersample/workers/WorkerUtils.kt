@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.ForegroundInfo
 import com.example.workmanagersample.*
@@ -50,4 +51,16 @@ fun makeStatusNotification(message: String, context: Context): ForegroundInfo {
     // Show the notification
 
     return ForegroundInfo(NOTIFICATION_ID, builder.build())
+}
+
+/**
+ * Method for sleeping for a fixed amount of time to emulate slower work
+ */
+fun sleep() {
+    try {
+        Thread.sleep(DELAY_TIME_MILLIS, 0)
+    } catch (e: InterruptedException) {
+        Log.e("sleep", e.message.toString())
+    }
+
 }
