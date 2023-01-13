@@ -8,6 +8,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.work.ForegroundInfo
 import com.example.workmanagersample.*
 
@@ -21,7 +22,7 @@ import com.example.workmanagersample.*
  * @param message Message shown on the notification
  * @param context Context needed to create Toast
  */
-fun makeStatusNotification(message: String, context: Context): ForegroundInfo {
+fun makeStatusNotification(message: String, context: Context){
 
     // Make a channel if necessary
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -48,9 +49,10 @@ fun makeStatusNotification(message: String, context: Context): ForegroundInfo {
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setVibrate(LongArray(0))
 
-    // Show the notification
 
-    return ForegroundInfo(NOTIFICATION_ID, builder.build())
+    NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build())
+
+//    return ForegroundInfo(NOTIFICATION_ID, builder.build())
 }
 
 /**

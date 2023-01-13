@@ -1,30 +1,59 @@
 package com.example.workmanagersample
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.*
+import com.example.workmanagersample.workers.ExpeditedWork
+import com.example.workmanagersample.workers.OneTimeWork
 import com.example.workmanagersample.workers.PeriodicWork
+import java.util.concurrent.TimeUnit
 
 class WorkViewModel(application: Application) : ViewModel() {
     private val workManager = WorkManager.getInstance(application)
-    internal val outputWorkInfos: LiveData<List<WorkInfo>>
+    internal val outputWorkInfos: LiveData<List<WorkInfo>> =
+        workManager.getWorkInfosByTagLiveData(TAG_OUTPUT)
 
-    init {
-        outputWorkInfos = workManager.getWorkInfosByTagLiveData(TAG_OUTPUT)
-    }
-
-    internal fun applyPeriodicWork(second: Long) {
+    internal fun applyPeriodicWork(minute: Long) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val periodicWorkRequest =
-                OneTimeWorkRequestBuilder<PeriodicWork>()
-            OneTimeWorkRequest.Builder(PeriodicWork::class.java).addTag(TAG_OUTPUT).build()
-            // Create charging constraint
-            var continuation = workManager.beginUniqueWork("PeriodicWork", ExistingWorkPolicy.REPLACE, OneTimeWorkRequest.from(PeriodicWork::class.java))
-            continuation.enqueue()
+                PeriodicWorkRequest.Builder(PeriodicWork::class.java, 15.toLong(), TimeUnit.MINUTES)
+                    .addTag(TAG_OUTPUT).build()
+            workManager.enqueueUniquePeriodicWork(
+                "PeriodicWork",
+                ExistingPeriodicWorkPolicy.KEEP,
+                periodicWorkRequest
+            )
         }
+    }
+
+    @SuppressLint("RestrictedApi")
+    internal fun applyOneTimeWork(second: Long) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val oneTimeWorkRequest =
+                OneTimeWorkRequest.Builder(OneTimeWork::class.java)
+                    .setInitialDelay(second, TimeUnit.SECONDS)
+                    .addTag(TAG_OUTPUT).build()
+            workManager.enqueueUniqueWork(
+                "OneTimeWork",
+                ExistingWorkPolicy.KEEP,
+                oneTimeWorkRequest
+            )
+        }
+    }
+
+    internal fun applyExpeditedWorkRequest() {
+        val expeditedWorkRequest = OneTimeWorkRequest.Builder(ExpeditedWork::class.java)
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .addTag(TAG_OUTPUT).build()
+        workManager.enqueueUniqueWork(
+            "ExpeditedWork",
+            ExistingWorkPolicy.KEEP,
+            expeditedWorkRequest
+        )
     }
 
     internal fun cancelWork() {
