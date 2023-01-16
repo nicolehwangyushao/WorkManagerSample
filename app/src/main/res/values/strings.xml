@@ -6,4 +6,8 @@
     <string name="immediate_work">Immediate Work</string>
     <string name="go">Go</string>
     <string name="cancel_work">Cancel</string>
+    <string name="repeat_time">Repeat Interval (min) :</string>
+    <string name="delay_time">Delay (sec) :</string>
+    <string name="repeat_hint">Minimum 15 minutes</string>
+    <string name="delay_hint">seconds delay for one time work</string>
 </resources>

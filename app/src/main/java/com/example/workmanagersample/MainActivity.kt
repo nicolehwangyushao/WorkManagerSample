@@ -1,7 +1,6 @@
 package com.example.workmanagersample
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -28,11 +27,26 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.goButton.setOnClickListener {
-            when(workType){
-                1 -> viewModel.applyPeriodicWork(workType.toLong())
-                2 -> viewModel.applyOneTimeWork(5.toLong())
+            when (workType) {
+                1 -> {
+                    val min = binding.minutesRepeat.text.toString()
+                    try {
+                        viewModel.applyPeriodicWork(min.toLong())
+                    } catch (ex: NumberFormatException) {
+                        viewModel.applyPeriodicWork(15.toLong())
+                    }
+                }
+                2 -> {
+                    val sec = binding.secondDelay.text.toString()
+                    try {
+                        viewModel.applyPeriodicWork(sec.toLong())
+                    } catch (ex: NumberFormatException) {
+                        viewModel.applyOneTimeWork(10.toLong())
+                    }
+                }
                 3 -> viewModel.applyExpeditedWorkRequest()
-            } }
+            }
+        }
         binding.cancelButton.setOnClickListener { viewModel.cancelWork() }
         viewModel.outputWorkInfos.observe(this, workInfosObserver())
         notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)

@@ -20,7 +20,7 @@ class WorkViewModel(application: Application) : ViewModel() {
     internal fun applyPeriodicWork(minute: Long) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val periodicWorkRequest =
-                PeriodicWorkRequest.Builder(PeriodicWork::class.java, 15.toLong(), TimeUnit.MINUTES)
+                PeriodicWorkRequest.Builder(PeriodicWork::class.java, minute, TimeUnit.MINUTES)
                     .addTag(TAG_OUTPUT).build()
             workManager.enqueueUniquePeriodicWork(
                 "PeriodicWork",
